@@ -1,4 +1,5 @@
 php artisan serve --port=8010
 php artisan make:model ToDo -m
+php artisan make:controller ToDoController
 php artisan migrate
 php artisan migrate:rollback --step=1
