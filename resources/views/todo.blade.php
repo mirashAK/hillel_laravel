@@ -91,9 +91,9 @@
                 <fieldset>
                     <legend>List of todo`s:</legend>
 
-                    <div class="flex-group bg-warning">
+                    <div class="todo-container flex-group bg-warning">
                         <div class="flex-control">
-                            <input type="checkbox">
+                            <input class="check-todo" type="checkbox" />
                         </div>
                         <div class="flex-text todo-padding css-tooltip">
                             <p class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco</p>
@@ -104,9 +104,9 @@
                         </div>
                     </div>
 
-                    <div class="flex-group bg-success">
+                    <div class="todo-container flex-group bg-success">
                         <div class="flex-control">
-                            <input type="checkbox" checked>
+                            <input class="check-todo" type="checkbox" checked />
                         </div>
                         <div class="flex-text todo-padding css-tooltip">
                             <p class="text text-striped">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco</p>
@@ -123,5 +123,32 @@
 
         </div>
         <div class="col-md-4"></div>
+
+
+        <script type="text/javascript">
+            console.log(`DOMContentLoaded: Before`);
+            document.addEventListener('DOMContentLoaded', function(){ // Аналог $(document).ready(function(){
+                console.log(`DOMContentLoaded: After`);
+                const checkboxes = document.querySelectorAll('.check-todo');
+                checkboxes.forEach(function (checkbox, checkboxIdx){
+                    console.log(`checkbox: `, checkboxIdx, checkbox);
+                    checkbox.addEventListener('change', function(event){
+                        console.log(`this.checked: `, this.checked);
+                        const parent = this.closest('.todo-container');
+                        const text = parent.querySelector('.text');
+                        if (this.checked) {
+                            parent.classList.remove('bg-warning');
+                            parent.classList.add('bg-success');
+                            text.classList.add('text-striped');
+                        } else {
+                            parent.classList.remove('bg-success');
+                            parent.classList.add('bg-warning');
+                            text.classList.remove('text-striped');
+                        }
+                    })
+                })
+            });
+        </script>
+
     </body>
 </html>
