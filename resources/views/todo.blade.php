@@ -135,14 +135,17 @@
                 const xhr = new XMLHttpRequest();
                 xhr.open("GET", `${BASE_URL}/api/todos`, true); // true == async
                 xhr.setRequestHeader("Content-type", "application/json");
-                xhr.onreadystatechange = function() {
-                    if (this.readyState == 4 && this.status == 200) {
-                        const toDosArray = JSON.parse(this.responseText);
+                xhr.onreadystatechange = ()=>{
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        const toDosArray = JSON.parse(xhr.responseText);
                         const containerEl = document.getElementById('todos-container');
                         toDosArray.forEach((todo)=>{
                             const newToDoEl = createElementFromHTML(todo);
                             newToDoEl.querySelector('.check-todo').addEventListener('change', function(event){
                                 handleChangeEvent.call(this);
+                            });
+                            newToDoEl.querySelector('button.close').addEventListener('click', function(event){
+                                handleDeleteEvent.call(this);
                             })
                             containerEl.appendChild(newToDoEl);
                         })
@@ -151,13 +154,27 @@
                 xhr.send();
             }
 
-            const sendNewToDo = (params)=>{
+
+            const sendCheckToDo = (params)=>{
+                const xhr = new XMLHttpRequest();
+                xhr.open("PUT", `${BASE_URL}/api/todos/${params.id}`, true); // true == async
+                xhr.setRequestHeader("Content-type", "application/json");
+                xhr.onreadystatechange = ()=>{
+                    if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+                        console.log(`request done`);
+                    }
+                }
+                xhr.send(JSON.stringify(params));
+            }
+
+            const sendNewToDo = (params, callback)=>{
                 const xhr = new XMLHttpRequest();
                 xhr.open("POST", `${BASE_URL}/api/todos`, true); // true == async
                 xhr.setRequestHeader("Content-type", "application/json");
                 xhr.onreadystatechange = ()=>{
                     if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 201) {
-                        console.log(`request done`);
+                        const toDo = JSON.parse(xhr.responseText);
+                        if (callback) callback(toDo);
                     }
                 }
                 xhr.send(JSON.stringify(params));
@@ -173,18 +190,43 @@
                     checked: false,
                 }
 
+                sendNewToDo(params, createNewTodoElement);
+
+                titleEl.value = '';
+                descEl.value = '';
+            }
+
+            const deleteToDo = (params)=>{
+                const xhr = new XMLHttpRequest();
+                xhr.open("DELETE", `${BASE_URL}/api/todos/${params.id}`, true); // true == async
+                xhr.setRequestHeader("Content-type", "application/json");
+                xhr.onreadystatechange = ()=>{
+                    if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+                        document.getElementById(params.id).remove();
+                    }
+                }
+                xhr.send(JSON.stringify(params));
+            }
+
+            function createNewTodoElement(params) {
                 const newToDoEl = createElementFromHTML(params);
                 newToDoEl.querySelector('.check-todo').addEventListener('change', function(event){
                     handleChangeEvent.call(this);
                 })
 
+                newToDoEl.querySelector('button.close').addEventListener('click', function(event){
+                    handleDeleteEvent.call(this);
+                })
+
                 const containerEl = document.getElementById('todos-container');
                 containerEl.appendChild(newToDoEl);
+            }
 
-                sendNewToDo(params);
-
-                //titleEl.value = '';
-                //descEl.value = '';
+            function handleDeleteEvent() {
+                const params = {
+                    id: this.dataset.id
+                };
+                deleteToDo(params);
             }
 
             function createElementFromHTML(params) {
@@ -193,14 +235,14 @@
                 const htmlString =
                 `<div id="${params.id ? params.id : ''}" class="todo-container flex-group ${params.checked ? 'bg-success' : 'bg-warning'}">
                     <div class="flex-control">
-                        <input class="check-todo" type="checkbox" ${params.checked ? 'checked' : ''}/>
+                        <input class="check-todo" type="checkbox" data-id="${params.id ? params.id : ''}" ${params.checked ? 'checked' : ''}/>
                     </div>
                     <div class="flex-text todo-padding css-tooltip">
                         <p class="text ${params.checked ? 'text-striped' : ''}">${params.title}</p>
                         <span class="css-tooltip-text">${params.description}</span>
                     </div>
                     <div class="flex-control">
-                        <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <button type="button" data-id="${params.id ? params.id : ''}" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     </div>
                 </div>`;
                 div.innerHTML = htmlString.trim();
@@ -221,18 +263,29 @@
                     parent.classList.add('bg-warning');
                     text.classList.remove('text-striped');
                 }
+                //2012-11-04 14:51:06
+                let date = new Date().toISOString();
+                date = date.replace(/T/, ' ').replace(/\..+/, '');
+
+                const params = {
+                    id: this.dataset.id,
+                    checked: this.checked,
+                    checked_at: this.checked ? date : null
+                }
+
+                sendCheckToDo(params);
             }
 
             console.log(`DOMContentLoaded: Before`);
             document.addEventListener('DOMContentLoaded', function(){ // Аналог $(document).ready(function(){
                 getToDos();
-                const checkboxes = document.querySelectorAll('.check-todo');
-                checkboxes.forEach(function (checkbox, checkboxIdx){
-                    console.log(`checkbox: `, checkboxIdx, checkbox);
-                    checkbox.addEventListener('change', function(event){
-                        handleChangeEvent.call(this);
-                    })
-                })
+//                 const checkboxes = document.querySelectorAll('.check-todo');
+//                 checkboxes.forEach(function (checkbox, checkboxIdx){
+//                     console.log(`checkbox: `, checkboxIdx, checkbox);
+//                     checkbox.addEventListener('change', function(event){
+//                         handleChangeEvent.call(this);
+//                     })
+//                 })
                 const addButton = document.getElementById('add-todo');
                 addButton.addEventListener('click', function(event){
                     event.preventDefault();
