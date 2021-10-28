@@ -23,3 +23,6 @@ Route::get('/about', function () {
 });
 
 Route::get('/contacts', [Controller::class, 'render_view']);
+
+
+Route::get('/todo', [Controller::class, 'render_todo']);

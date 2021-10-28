@@ -14,4 +14,8 @@ class Controller extends BaseController
     public function render_view() {
         return view('contacts');
     }
+
+    public function render_todo() {
+        return view('todo');
+    }
 }
