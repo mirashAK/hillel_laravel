@@ -50,6 +50,7 @@
                 display: flex;
                 flex-direction: row;
                 align-items: center;
+                padding-left: 15px;
             }
             .flex-control {
                 width: 5%;
@@ -79,14 +80,14 @@
                     <div class="form-group">
                         <label  class="col-md-2" for="new-description">Description:</label>
                         <div class="col-md-10">
-                            <textarea class="form-control" rows="3" id="new-description" placeholder="Description"></textarea>
+                            <textarea class="form-control" rows="2" id="new-description" placeholder="Description"></textarea>
                         </div>
                     </div>
                     <a class="btn btn-primary btn-block" href="#" role="button">Add</a>
                 </fieldset>
             </form>
             <br/>
-            <form class="text-center">
+            <form>
                 <fieldset>
                     <legend>List of todo`s:</legend>
 
