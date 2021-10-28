@@ -62,6 +62,9 @@
                 width: 90%;
             }
         </style>
+        <script type="text/javascript">
+            const BASE_URL = "{{ url('/') }}";
+        </script>
     </head>
     <body>
         <h1 class="text-center">ToDo`s</h1>
@@ -91,7 +94,7 @@
                 <fieldset id="todos-container">
                     <legend>List of todo`s:</legend>
 
-                    <div class="todo-container flex-group bg-warning">
+<!--                    <div class="todo-container flex-group bg-warning">
                         <div class="flex-control">
                             <input class="check-todo" type="checkbox" />
                         </div>
@@ -115,7 +118,7 @@
                         <div class="flex-control">
                             <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         </div>
-                    </div>
+                    </div>-->
 
                 </fieldset>
                 <hr/>
@@ -128,11 +131,49 @@
 
         <script type="text/javascript">
 
+            const getToDos = ()=>{
+                const xhr = new XMLHttpRequest();
+                xhr.open("GET", `${BASE_URL}/api/todos`, true); // true == async
+                xhr.setRequestHeader("Content-type", "application/json");
+                xhr.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        const toDosArray = JSON.parse(this.responseText);
+                        const containerEl = document.getElementById('todos-container');
+                        toDosArray.forEach((todo)=>{
+                            const newToDoEl = createElementFromHTML(todo);
+                            newToDoEl.querySelector('.check-todo').addEventListener('change', function(event){
+                                handleChangeEvent.call(this);
+                            })
+                            containerEl.appendChild(newToDoEl);
+                        })
+                    }
+                };
+                xhr.send();
+            }
+
+            const sendNewToDo = (params)=>{
+                const xhr = new XMLHttpRequest();
+                xhr.open("POST", `${BASE_URL}/api/todos`, true); // true == async
+                xhr.setRequestHeader("Content-type", "application/json");
+                xhr.onreadystatechange = ()=>{
+                    if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 201) {
+                        console.log(`request done`);
+                    }
+                }
+                xhr.send(JSON.stringify(params));
+            }
+
             function createNewTodo() {
                 const titleEl = document.getElementById('new-title');
                 const descEl = document.getElementById('new-description');
 
-                const newToDoEl = createElementFromHTML({title: titleEl.value, descr: descEl.value});
+                const params = {
+                    title: titleEl.value,
+                    description: descEl.value,
+                    checked: false,
+                }
+
+                const newToDoEl = createElementFromHTML(params);
                 newToDoEl.querySelector('.check-todo').addEventListener('change', function(event){
                     handleChangeEvent.call(this);
                 })
@@ -140,21 +181,23 @@
                 const containerEl = document.getElementById('todos-container');
                 containerEl.appendChild(newToDoEl);
 
-                titleEl.value = '';
-                descEl.value = '';
+                sendNewToDo(params);
+
+                //titleEl.value = '';
+                //descEl.value = '';
             }
 
             function createElementFromHTML(params) {
 
                 const div = document.createElement('div');
                 const htmlString =
-                `<div class="todo-container flex-group bg-warning">
+                `<div id="${params.id ? params.id : ''}" class="todo-container flex-group ${params.checked ? 'bg-success' : 'bg-warning'}">
                     <div class="flex-control">
-                        <input class="check-todo" type="checkbox" />
+                        <input class="check-todo" type="checkbox" ${params.checked ? 'checked' : ''}/>
                     </div>
                     <div class="flex-text todo-padding css-tooltip">
-                        <p class="text">${params.title}</p>
-                        <span class="css-tooltip-text">${params.descr}</span>
+                        <p class="text ${params.checked ? 'text-striped' : ''}">${params.title}</p>
+                        <span class="css-tooltip-text">${params.description}</span>
                     </div>
                     <div class="flex-control">
                         <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -182,7 +225,7 @@
 
             console.log(`DOMContentLoaded: Before`);
             document.addEventListener('DOMContentLoaded', function(){ // Аналог $(document).ready(function(){
-                console.log(`DOMContentLoaded: After`);
+                getToDos();
                 const checkboxes = document.querySelectorAll('.check-todo');
                 checkboxes.forEach(function (checkbox, checkboxIdx){
                     console.log(`checkbox: `, checkboxIdx, checkbox);

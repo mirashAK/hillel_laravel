@@ -8,5 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class ToDo extends Model
 {
     use HasFactory;
-    protected $fillable = ['checked', 'checked_at', 'title', 'description'];
+    protected $fillable = ['checked', 'title', 'description'];
 }
