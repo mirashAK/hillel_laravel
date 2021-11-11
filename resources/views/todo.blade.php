@@ -65,12 +65,9 @@
     </head>
     <body>
         <h1 class="text-center">ToDo`s</h1>
-        <div id="app">
-            <example-component></example-component>
-        </div>
         <div class="col-md-4"></div>
-        <div class="col-md-4">
-
+        <div class="col-md-4" id="app">
+            <to-do-component></to-do-component>
             <form class="form-horizontal">
                 <fieldset>
                     <legend>Add new</legend>
