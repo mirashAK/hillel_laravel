@@ -65,6 +65,9 @@
     </head>
     <body>
         <h1 class="text-center">ToDo`s</h1>
+        <div id="app">
+            <example-component></example-component>
+        </div>
         <div class="col-md-4"></div>
         <div class="col-md-4">
 
@@ -123,5 +126,6 @@
 
         </div>
         <div class="col-md-4"></div>
+        <script src="{{ mix('/js/app.js') }}"></script>
     </body>
 </html>

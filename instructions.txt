@@ -3,3 +3,15 @@ php artisan make:model ToDo -m
 php artisan make:controller ToDoController
 php artisan migrate
 php artisan migrate:rollback --step=1
+
+setup vue:
+composer require laravel/ui
+php artisan ui vue
+npm install && npm run dev
+
+in template:
+<script src="{{ mix('/js/app.js') }}"></script>
+
+<div id="app">
+   <example-component></example-component>
+</div>
