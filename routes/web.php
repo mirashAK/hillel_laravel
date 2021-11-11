@@ -24,5 +24,9 @@ Route::get('/about', function () {
 
 Route::get('/contacts', [Controller::class, 'render_view']);
 
+//Route::get('/todo', [Controller::class, 'render_todo']);
+Route::get('/todo/{name?}', [Controller::class, 'render_todo'])->where('name', '[A-Za-z]+');
 
-Route::get('/todo', [Controller::class, 'render_todo']);
+// Route::get('/todo/?{name}', function(){
+//     return redirect('render_todo');
+// })->where('name', '[A-Za-z]+');

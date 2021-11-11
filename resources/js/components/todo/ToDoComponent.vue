@@ -1,5 +1,10 @@
 <template>
 <section>
+<ul class="nav nav-tabs">
+  <li role="presentation" v-bind:class="{'active': $route.name == 'todo'}"><router-link to="/todo">All</router-link></li>
+  <li role="presentation" v-bind:class="{'active': $route.name == 'checked'}"><router-link to="/todo/checked">Checked</router-link></li>
+  <li role="presentation" v-bind:class="{'active': $route.name == 'unchecked'}"><router-link to="/todo/unchecked">Unchecked</router-link></li>
+</ul>
     <form class="form-horizontal">
          <fieldset>
             <legend>Add new</legend>
@@ -22,7 +27,7 @@
     <form>
         <fieldset>
             <legend>List of todo`s:</legend>
-            <section v-for="todo in todos" :key="todo.id">
+            <section v-for="todo in filterdedTodos" :key="todo.id">
                 <div class="flex-group" v-bind:class="[ todo.checked ? 'bg-success' : 'bg-warning']">
                     <div class="flex-control">
                         <input type="checkbox" v-model="todo.checked">
@@ -83,6 +88,23 @@
                 ],
                 newTodo: new Todo()
             }
+        },
+        computed: {
+            filterdedTodos: {
+                get() {
+                    switch(this.$route.name) {
+                        case 'checked' : {
+                            return this.todos.filter((todo)=>todo.checked)
+                        } break;
+                        case 'unchecked' : {
+                            return this.todos.filter((todo)=>!todo.checked)
+                        } break;
+                        default : {
+                            return this.todos;
+                        } break;
+                    };
+                }
+            },
         },
         methods: {
             addTodo(ev) {
