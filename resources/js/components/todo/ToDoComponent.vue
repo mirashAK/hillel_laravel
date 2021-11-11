@@ -34,7 +34,10 @@
                     </div>
                     <div class="flex-text todo-padding css-tooltip">
                         <p class="text" v-bind:class="{'text-striped': todo.checked}">{{todo.title}}</p>
-                        <span class="css-tooltip-text">{{todo.description}}</span>
+                        <span class="css-tooltip-text">
+                            Description: {{todo.description}}<br/>
+                            CheckedAt: {{todo.checked_at ? todo.checked_at : 'Never'}}
+                        </span>
                     </div>
                     <div class="flex-control">
                         <button type="button" class="close" aria-label="Close" v-on:click.prevent="delTodo(todo.id)"><span aria-hidden="true">&times;</span></button>
@@ -51,81 +54,55 @@
 
 <script>
 
-    class Todo {
-        constructor (init = {}) {
-            this.id = init.id || new Date().getTime();
-            this.checked = init.checked || false;
-            this.title = init.title || '';
-            this.description = init.description || '';
-            this.created_at = init.created_at || null;
-            this.updated_at = init.updated_at || null;
-            this.checked_at = init.checked_at || null;
-        }
-    }
+    import { mapGetters, mapActions, mapMutations } from 'vuex';
 
     export default {
         mounted() {
-            console.log('Component mounted.')
+            console.log('Component mounted.');
+            console.log(`this.$store.state.todos: `, this.$store.state.todos);
+            console.log(`this.$store.getters.getTodos: `, this.$store.getters.getTodos);
+            console.log(`this.getTodos: `, this.getTodos);
+
+            this.loadTodos();
         },
         data() {
             return {
-                todos: [
-                    {
-                        id:7,checked:false,
-                        created_at:'2021-11-05T18:35:48.000000Z',
-                        updated_at:'2021-11-05T18:35:48.000000Z',
-                        checked_at:null,
-                        title:'Lorem ipsum dolor sit amet',
-                        description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco'
-                    },{
-                        id:8,checked:0,
-                        created_at:'2021-11-05T18:35:48.000000Z',
-                        updated_at:'2021-11-05T18:35:48.000000Z',
-                        checked_at:true,
-                        title:'Lorem ipsum dolor sit amet, consectetur',
-                        description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco'
-                    }
-                ],
-                newTodo: new Todo()
             }
         },
         computed: {
+            ...mapGetters([
+                'getTodos',
+                'getFilterdedTodos',
+                'newTodo',
+            ]),
             filterdedTodos: {
                 get() {
-                    switch(this.$route.name) {
-                        case 'checked' : {
-                            return this.todos.filter((todo)=>todo.checked)
-                        } break;
-                        case 'unchecked' : {
-                            return this.todos.filter((todo)=>!todo.checked)
-                        } break;
-                        default : {
-                            return this.todos;
-                        } break;
-                    };
+                    return this.getFilterdedTodos(this.$route.name);
                 }
             },
         },
         methods: {
-            addTodo(ev) {
-                //this.newTodo.title = 'TEST';
-
-                console.log(`newTodo.title: `, this.newTodo );
-
-                this.todos.push(this.newTodo);
-                this.newTodo = new Todo();
-            },
-
-            delTodo(todoId) {
-                this.todos = this.todos.filter((todo)=>{
-                    return todo.id !== todoId;
-                })
-            },
-
-            delChecked() {
-                this.todos = this.todos.filter((todo)=>{
-                    return todo.checked == false;
-                })
+            ...mapActions([
+                'loadTodos',
+                'addTodo',
+                'setTodoChecked',
+                'delTodo',
+                'delChecked'
+            ]),
+        },
+        watch: {
+            'filterdedTodos': {
+                deep: true,
+                handler(newVal, oldVal) {
+                    if(newVal.length && oldVal.length) {
+                        const checked = newVal.filter((todo)=>{
+                            return (todo.checked && !todo.checked_at) || (!todo.checked && todo.checked_at);
+                        })
+                        if (checked.length) {
+                            this.setTodoChecked(checked[0]);
+                        }
+                    }
+                }
             }
         }
     }

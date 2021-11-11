@@ -70,6 +70,10 @@
             <router-view></router-view>
         </div>
         <div class="col-md-4"></div>
+
+        <script type="text/javascript">
+            const BASE_URL = "{{ url('/') }}";
+        </script>
         <script src="{{ mix('/js/app.js') }}"></script>
     </body>
 </html>
