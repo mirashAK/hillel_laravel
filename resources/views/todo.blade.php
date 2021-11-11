@@ -68,59 +68,6 @@
         <div class="col-md-4"></div>
         <div class="col-md-4" id="app">
             <to-do-component></to-do-component>
-            <form class="form-horizontal">
-                <fieldset>
-                    <legend>Add new</legend>
-                    <div class="form-group">
-                        <label class="col-md-2" for="new-title">Title:</label>
-                        <div class="col-md-10">
-                            <input type="text" class="form-control" id="new-title" placeholder="Title">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label  class="col-md-2" for="new-description">Description:</label>
-                        <div class="col-md-10">
-                            <textarea class="form-control" rows="2" id="new-description" placeholder="Description"></textarea>
-                        </div>
-                    </div>
-                    <a class="btn btn-primary btn-block" href="#" role="button">Add</a>
-                </fieldset>
-            </form>
-            <br/>
-            <form>
-                <fieldset>
-                    <legend>List of todo`s:</legend>
-
-                    <div class="flex-group bg-warning">
-                        <div class="flex-control">
-                            <input type="checkbox">
-                        </div>
-                        <div class="flex-text todo-padding css-tooltip">
-                            <p class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco</p>
-                            <span class="css-tooltip-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco</span>
-                        </div>
-                        <div class="flex-control">
-                            <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        </div>
-                    </div>
-
-                    <div class="flex-group bg-success">
-                        <div class="flex-control">
-                            <input type="checkbox" checked>
-                        </div>
-                        <div class="flex-text todo-padding css-tooltip">
-                            <p class="text text-striped">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco</p>
-                            <span class="css-tooltip-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco</span>
-                        </div>
-                        <div class="flex-control">
-                            <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        </div>
-                    </div>
-                    <hr/>
-                    <button class="btn btn-danger btn-block">Delete checked</button>
-                </fieldset>
-            </form>
-
         </div>
         <div class="col-md-4"></div>
         <script src="{{ mix('/js/app.js') }}"></script>
